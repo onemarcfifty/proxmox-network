@@ -32,7 +32,9 @@ vmbr6 - 192.168.56.2/24 (set it to 192.168.1.2/24 if you don't want to change Op
 The bridges after the shapers: (slightly different in the video but it makes more sense like this) :
 
 vmbr7 - 10.7.0.2/24
+
 vmbr8 - 10.8.0.2/24
+
 vmbr9 - 10.9.0.2/24
 
 The outmost right bridge (between OMR and the client):
@@ -291,7 +293,12 @@ If you don't have OpenMPTCPRouter installed, then do this on the MPTCP client ma
 
 
 Marc's channel on youtube: https://www.youtube.com/channel/UCG5Ph9Mm6UEQLJJ-kGIC2AQ
+
 Marc on Twitter:  https://twitter.com/onemarcfifty
+
 Marc on Facebook: https://www.facebook.com/onemarcfifty/
+
 Marc on Reddit: https://www.reddit.com/user/onemarcfifty
+
 Chat with me on Discord: https://discord.com/invite/DXnfBUG
+
