@@ -49,16 +49,22 @@ scrap the original disk: Select the OpenWrt VM in the Proxmox UI, select hardwar
 
 Inside OpenWrt - changing the IP
 
-`\#show the ip addresses:`
+`#show the ip addresses:`
+
 `ip addr`
-`\#change the lan address:`
+
+`#change the lan address:`
+
 `uci show network.lan`
+
 `uci set network.lan.ipaddr=192.168.56.1`
+
 `uci commit`
+
 `reboot`
 
-3. Shaper Machines
-==================
+3.) Shaper Machines
+===================
 
 Create CT - Debian 10 template - 8 GB Disk, 1 Core, 512 MB RAM
 eth0 = vmbr6, dhcp (address provided by perimeter router)
@@ -83,6 +89,7 @@ put the following in `/etc/rc.local` (might need to chmod +x on this file)
 `\#!/bin/bash`
 
 `sysctl net.ipv4.ip_forward=1`
+
 `iptables -t nat -A POSTROUTING -o eth0 -j  MASQUERADE`
 
 (the iptables command enables NAT/Masquerading to the outside)
@@ -90,6 +97,7 @@ put the following in `/etc/rc.local` (might need to chmod +x on this file)
 installing software:
 
 `apt update`
+
 `apt install bmon isc-dhcp-server speedometer sudo`
 
 DHCP options in /etc/dhcp/dhcpd.conf (for shaper1):
@@ -110,26 +118,32 @@ subnet 10.7.0.0 netmask 255.255.255.0 {
 
 in /etc/default/isc-dhcp-server set:
 
-INTERFACESv4="eth1"
+`INTERFACESv4="eth1"`
 
 (I also set eth2 because that's a VLAN I pulled to my workstation for the sake of making the video)
 
 
-#restarting the server with 
-systemctl restart isc-dhcp-server
-#checking the logs with
-grep -i dhcp /var/log/syslog
-# create the ssh keys with
-ssh-keygen
-# the files are in /root/.ssh/id_rsa*
+`#restarting the server with`
 
-adapt /etc/ssh/sshd_config
+`systemctl restart isc-dhcp-server`
 
-(find the line AuthorizedKeysFile, uncomment it if trailing "#", append .ssh/id_rsa .ssh/id_rsa.pub)
+`#checking the logs with`
+
+`grep -i dhcp /var/log/syslog`
+
+`# create the ssh keys with`
+
+`ssh-keygen`
+
+`# the files are in /root/.ssh/id_rsa*`
+
+adapt `/etc/ssh/sshd_config`
+
+(find the line AuthorizedKeysFile, uncomment it if trailing "#", append `.ssh/id_rsa .ssh/id_rsa.pub)`
 
 
-4. VPS for OpenMPTCPRouter
-==========================
+4.) VPS for OpenMPTCPRouter
+===========================
 
 Details in this video: https://youtu.be/mYYoIDCWszo
 
