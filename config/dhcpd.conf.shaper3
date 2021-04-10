@@ -1,0 +1,11 @@
+option domain-name "testnet.lan";
+default-lease-time 3600; 
+max-lease-time 7200;
+authoritative;
+
+subnet 10.9.0.0 netmask 255.255.255.0 {
+        option routers                  10.9.0.1;
+        option subnet-mask              255.255.255.0;
+        option domain-search            "testnet.lan";
+        range   10.9.0.100   10.9.0.120;
+}

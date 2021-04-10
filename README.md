@@ -152,9 +152,9 @@ net0: vmbr6 (VIRTIO)
 
 Debian Install : Install SSH Server
 
-Install the OpenMPTCPRouter config by issuing this command (REMOVE SPACES AFTER https)
+Install the OpenMPTCPRouter config by issuing this command
 
-wget -O - https   ://www.openmptcprouter.com/server/debian10-x86_64.sh | sh 
+`wget -O - https://www.openmptcprouter.com/server/debian10-x86_64.sh | sh`
 
 5. VM with MPTCP enabled Kernel
 ===============================
