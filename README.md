@@ -49,11 +49,11 @@ scrap the original disk: Select the OpenWrt VM in the Proxmox UI, select hardwar
 
 Inside OpenWrt - changing the IP
 
-`# show the ip addresses
-ip addr
-# change the lan address
-uci show network.lan
-uci set network.lan.ipaddr=192.168.56.1
+`# show the ip addresses`
+`ip addr`
+`# change the lan address`
+`uci show network.lan`
+`uci set network.lan.ipaddr=192.168.56.1`
 uci commit
 reboot
 `
