@@ -1,7 +1,12 @@
 # proxmox-network
 Scripts and Stuff around the Proxmox Network
 
-Virtual Network in Proxmox for MPTCP Test lab
+Here is how to build the Virtual Network in Proxmox for MPTCP Test lab
+as outlined in this video
+
+![Network Diagram](/images/Diagram1.jpg)
+Format: ![Alt Text](url)
+
 
 
 
