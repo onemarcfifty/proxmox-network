@@ -5,10 +5,16 @@ Here is how to build the Virtual Network in Proxmox for MPTCP Test lab
 as outlined in this video
 
 ![Network Diagram](/images/Diagram1.jpg)
-Format: ![Alt Text](url)
+
+Alternate Layout with OpenMPTCPRouter:
 
 
+![Network Diagram](/images/Diagram2.jpg)
 
+
+You can use this network together with the mptcp-tools shaper interface in order to make Network lines "bad lines", i.e. tweak bandwidth, latency and error rate with tc netem.
+
+This readme is longer than 5,000 characters hence I could not put it into the description of the video...
 
 Setup Details and Commands that I issued on the machines
 
@@ -44,11 +50,11 @@ net1: vmbr0 (physical), VIRTIO
 
 One-Liner to execute on the Proxmox PVE console to download the OpenWrt Image, unzip and import the disk to the OpenWrt VM:
 
-wget -O - "OPENWRTURL" | gunzip -c >openwrt.img ; qm importdisk 102 openwrt.img local-lvm
+`wget -O - "OPENWRTURL" | gunzip -c >openwrt.img ; qm importdisk 102 openwrt.img local-lvm`
 
-(replace OPENWRTURL with the URL of the OpenWrt generix ext4 COMBINED image)
-(replace 102 with the ID of your OpenWrt VM)
-(replace local-vm with the storage where you want your disk to be located)
+(replace `OPENWRTURL` with the URL of the OpenWrt generix ext4 COMBINED image)
+(replace `102` with the ID of your OpenWrt VM)
+(replace `local-vm` with the storage where you want your disk to be located)
 
 scrap the original disk: Select the OpenWrt VM in the Proxmox UI, select hardware, select the original disk, click "detach", then select it again, cick "Remove". Select the newly imported disk, select "Edit", chose IDE controler - that attaches it.
 
@@ -75,8 +81,11 @@ Create CT - Debian 10 template - 8 GB Disk, 1 Core, 512 MB RAM
 eth0 = vmbr6, dhcp (address provided by perimeter router)
 
 shaper1: eth1 = vmbr7, fix, 10.7.0.1
+
 shaper2: eth1 = vmbr8, fix, 10.8.0.1
+
 shaper3: eth1 = vmbr8, fix, 10.9.0.1
+
 
 enabling IPV4 routing: 
 
@@ -97,7 +106,9 @@ put the following in `/etc/rc.local` (might need to chmod +x on this file)
 
 `iptables -t nat -A POSTROUTING -o eth0 -j  MASQUERADE`
 
+
 (the iptables command enables NAT/Masquerading to the outside)
+(the file is in the /config subdirectory on this github)
 
 installing software:
 
@@ -107,17 +118,7 @@ installing software:
 
 DHCP options in /etc/dhcp/dhcpd.conf (for shaper1):
 
-option domain-name "testnet.lan";
-default-lease-time 3600; 
-max-lease-time 7200;
-authoritative;
-
-subnet 10.7.0.0 netmask 255.255.255.0 {
-        option routers                  10.7.0.1;
-        option subnet-mask              255.255.255.0;
-        option domain-search            "testnet.lan";
-        range   10.7.0.100   10.7.0.120;
-}
+The config files are in the /config subdirectory on this repository.
 
 (replace all 10.7.0 with 10.8.0 for shaper2 and with 10.9.0 for shaper3)
 
@@ -153,6 +154,7 @@ adapt `/etc/ssh/sshd_config`
 Details in this video: https://youtu.be/mYYoIDCWszo
 
 Create VM - Debian 10 - Disk size 32 GB - 1 CPU, 2048 MB RAM
+
 net0: vmbr6 (VIRTIO)
 
 Debian Install : Install SSH Server
@@ -161,77 +163,105 @@ Install the OpenMPTCPRouter config by issuing this command
 
 `wget -O - https://www.openmptcprouter.com/server/debian10-x86_64.sh | sh`
 
-5. VM with MPTCP enabled Kernel
+5.) VM with MPTCP enabled Kernel
 ===============================
 
 Details in this video: https://youtu.be/mYYoIDCWszo
 
 Create VM - Debian 10 - Disk size 32 GB - 1 CPU, 2048 MB RAM
+
 Debian Install : Install SSH Server
 
 net0:vmbr7, VIRTIO
+
 net1:vmbr8, VIRTIO
+
 net2:vmbr9, VIRTIO
 
+
 Install the MPTCP enabled Kernel by issuing this command 
-(remove the spaces or underscores in the URLs)
 
-wget https:/_/raw.githubusercontent.com/onemarcfifty/mptcp-tools/main/makescript.sh
-chmod 755 makescript.sh
-./makescript.sh
-# this creates the fetch_ycarus_kernel.sh
-chmod 755 fetch_ycarus_kernel.sh
-./fetch_ycarus_kernel.sh
-# this now creates two debian packages in the /tmp directory
-apt install /tmp/llinux-image....deb
-apt install /tmp/llinux-headers....deb
+`wget https://raw.githubusercontent.com/onemarcfifty/mptcp-tools/main/makescript.sh
 
-6. VM with OpenMPTCPRouter
+`chmod 755 makescript.sh`
+
+`./makescript.sh`
+
+`# this creates the fetch_ycarus_kernel.sh`
+
+`chmod 755 fetch_ycarus_kernel.sh`
+
+`./fetch_ycarus_kernel.sh`
+
+`# this now creates two debian packages in the /tmp directory`
+
+`apt install /tmp/llinux-image....deb`
+
+`apt install /tmp/llinux-headers....deb`
+
+6.) VM with OpenMPTCPRouter
 ==========================
 
 (pretty much the same like installing the Perimeter Router)
 
 1 CPU, 512MB RAM. Scrap the disk.
+
 net0: vmbr10, VIRTIO
+
 net1: vmbr7, VIRTIO
+
 net2: vmbr8, VIRTIO
+
 net3: vmbr9, VIRTIO
 
 One-Liner to execute on the Proxmox PVE console to download the OMR Image, unzip and import the disk to the OMR VM:
 
-wget -O - "OMRURL" | gunzip -c >openwrt.img ; qm importdisk 102 omr.img local-lvm
+`wget -O - "OMRURL" | gunzip -c >openwrt.img ; qm importdisk 102 omr.img local-lvm`
 
-(replace OMRURL with the URL of the OMR generix ext4 COMBINED image)
-(replace 102 with the ID of your OMR VM)
-(replace local-vm with the storage where you want your disk to be located)
+(replace `OMRURL` with the URL of the OMR generix ext4 COMBINED image)
+
+(replace `102` with the ID of your OMR VM)
+
+(replace `local-vm` with the storage where you want your disk to be located)
 
 Sample OMR URL (remove spaces):
 
-https:   //download.openmptcprouter.com/release/v0.57.3/x86_64/targets/x86/64/openmptcprouter-v0.57.3-r0+15225-bfc433efd4-x86-64-generic-ext4-combined.img.gz
+https://download.openmptcprouter.com/release/v0.57.3/x86_64/targets/x86/64/openmptcprouter-v0.57.3-r0+15225-bfc433efd4-x86-64-generic-ext4-combined.img.gz
 
 Inside OMR - setting the wan interfaces (towards the shapers) to dhcp:
 
-uci set network.wan1.proto=dhcp
-uci set network.wan2.proto=dhcp
-uci set network.wan3.proto=dhcp
-uci commit
-/etc/init.d/network restart
-#(or reboot of course)
+`uci set network.wan1.proto=dhcp`
 
-7. MATE client (utmost right)
+`uci set network.wan2.proto=dhcp`
+
+`uci set network.wan3.proto=dhcp`
+
+`uci commit`
+
+`/etc/init.d/network restart`
+
+`#(or reboot of course)`
+
+7.) MATE client (utmost right)
 =============================
 
 Create CT, Debian 10, 8 GB Disk, 1 CPU, 2048 MB RAM
+
 net0 = vmbr10 (VIRTIO), dhcp
+
 net1 = vmbr0 (either static or remove default gateway in the client machine to make sure the client is not routing through this inteerface but rather through the shapers)
 
-# create non-root-user
-adduser marc
-usermod -a -G sudo marc
+`# create non-root-user`
 
-# install software
-apt update
-apt install mate x2go sudo firefox-esr nodejs git
+`adduser marc`
+
+`usermod -a -G sudo marc`
+
+`# install software`
+
+`apt update`
+
+`apt install mate x2go sudo firefox-esr nodejs git`
 
 get the installer from https://wiki.x2go.org/doku.php/download:start
 
@@ -239,18 +269,25 @@ download the Qdisc scheduler Web Interface from my github https://github.com/one
 
 If you don't have OpenMPTCPRouter installed, then do this on the MPTCP client machine (5. VM with MPTCP enabled Kernel)
 
-(remove spaces and/or underscores)
+`git clone https:/_/github.com/onemarcfifty/mptcp-tools.git`
 
-git clone https:/_/github.com/onemarcfifty/mptcp-tools.git
-cd mptcp-tools
-cd nodejs
-# adapt the qdiscs.js file
-# download the ssh keys (id_rsa) from the shapers and name them id_shaper1, id_shaper2, id_shaper3
-chmod 600 id_shaper1
-chmod 600 id_shaper2
-chmod 600 id_shaper3
-node qdiscs.js
-# browse to localhost:8080
+`cd mptcp-tools`
+
+`cd nodejs`
+
+`# adapt the qdiscs.js file`
+
+`# download the ssh keys (id_rsa) from the shapers and name them id_shaper1, id_shaper2, id_shaper3`
+
+`chmod 600 id_shaper1`
+
+`chmod 600 id_shaper2`
+
+`chmod 600 id_shaper3`
+
+`node qdiscs.js`
+
+`# browse to localhost:8080`
 
 
 Marc's channel on youtube: https://www.youtube.com/channel/UCG5Ph9Mm6UEQLJJ-kGIC2AQ
@@ -258,5 +295,3 @@ Marc on Twitter:  https://twitter.com/onemarcfifty
 Marc on Facebook: https://www.facebook.com/onemarcfifty/
 Marc on Reddit: https://www.reddit.com/user/onemarcfifty
 Chat with me on Discord: https://discord.com/invite/DXnfBUG
-
-Licence-free music on /  Lizenzfreie Musik von https://www.terrasound.de/lizenzfreie-musik-fuer-youtube-videos/Licence-free music on /  Lizenzfreie Musik von https://www.terrasound.de/lizenzfreie-musik-fuer-youtube-videos/
