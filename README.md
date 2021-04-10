@@ -49,16 +49,13 @@ scrap the original disk: Select the OpenWrt VM in the Proxmox UI, select hardwar
 
 Inside OpenWrt - changing the IP
 
-show the ip addresses:
-
-ip addr
-
-change the lan address:
-
-uci show network.lan
-uci set network.lan.ipaddr=192.168.56.1
-uci commit
-reboot
+`\#show the ip addresses:`
+`ip addr`
+`\#change the lan address:`
+`uci show network.lan`
+`uci set network.lan.ipaddr=192.168.56.1`
+`uci commit`
+`reboot`
 
 3. Shaper Machines
 ==================
@@ -72,28 +69,28 @@ shaper3: eth1 = vmbr8, fix, 10.9.0.1
 
 enabling IPV4 routing: 
 
-sysctl net.ipv4.ip_forward=1
+`sysctl net.ipv4.ip_forward=1`
 (this does not survive a reboot)
 
-make it permanent in /etc/sysctl.conf
+make it permanent in `/etc/sysctl.conf`
 
-remove the trailing "#" from this line:
+remove the trailing "\#" from this line:
 
-net.ipv4.ip_forward=1
+`\#net.ipv4.ip_forward=1`
 
-put the following in /etc/rc.local (might need to chmod +x on this file)
+put the following in `/etc/rc.local` (might need to chmod +x on this file)
 
-\#!/bin/bash
+`\#!/bin/bash`
 
-sysctl net.ipv4.ip_forward=1
-iptables -t nat -A POSTROUTING -o eth0 -j  MASQUERADE
+`sysctl net.ipv4.ip_forward=1`
+`iptables -t nat -A POSTROUTING -o eth0 -j  MASQUERADE`
 
 (the iptables command enables NAT/Masquerading to the outside)
 
 installing software:
 
-apt update
-apt install bmon isc-dhcp-server speedometer sudo
+`apt update`
+`apt install bmon isc-dhcp-server speedometer sudo`
 
 DHCP options in /etc/dhcp/dhcpd.conf (for shaper1):
 
